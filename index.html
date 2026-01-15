@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Calendario 2026</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root { 
+            --c-libre: #4CAF50;
+            --c-14-22: #2196F3;
+            --c-12-22: #FF9800;
+            --c-14-00: #B71C1C;
+            --c-vaca:  #9C27B0;
+            --c-festivo: #00BCD4;
+            --bg: #f4f4f9; 
+        }
+        
+        body {
+            font-family: sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 10px;
+            padding-bottom: 80px;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            padding: 4px 8px;
+            background: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .calendar-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .month {
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 330px;
+            border: 1px solid #ccc;
+        }
+
+        .m-title {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 2px;
+        }
+
+        .cell {
+            width: 14.28%;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #eee;
+            box-sizing: border-box;
+        }
+
+        .d-head {
+            font-weight: bold;
+            color: #555;
+            font-size: 0.75rem;
+            height: 26px;
+            background: #f0f0f0;
+        }
+
+        .day {
+            cursor: pointer;
+            border-radius: 2px;
+            margin: 0;
+            background: #ffffff;
+        }
+
+        .day:active {
+            transform: scale(0.97);
+        }
+
+        .num {
+            font-size: 0.85rem;
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .lbl {
+            font-size: 0.55rem;
+            font-weight: bold;
+            pointer-events: none;
+            margin-top: 1px;
+        }
+
+        .s-libre { background: var(--c-libre); color: white; }
+        .s-14-22 { background: var(--c-14-22); color: white; }
+        .s-12-22 { background: var(--c-12-22); color: white; }
+        .s-14-00 { background: var(--c-14-00); color: white; }
+        .s-vaca  { background: var(--c-vaca);  color: white; }
+        .s-festivo {
+            background-image: repeating-linear-gradient(
+                45deg,
+                #00BCD4 0,
+                #00BCD4 4px,
+                #ffffff 4px,
+                #ffffff 8px
+            );
+            color: black;
+        }
+
+        .summary {
+            margin: 16px auto;
+            max-width: 600px;
+        }
+
+        .box {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .b-12 { border-left: 4px solid var(--c-12-22); }
+        .b-14 { border-left: 4px solid var(--c-14-00); }
+
+        .ctrl {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 8px;
+            display: flex;
+            gap: 5px;
+            border-top: 1px solid #ccc;
+            justify-content: center;
+        }
+
+        button {
+            flex: 1;
+            max-width: 110px;
+            padding: 10px 0;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        .btn-pdf { background: #4CAF50; }
+        .btn-del { background: #F44336; }
+
+        @media print {
+            .ctrl { display: none; }
+            .month { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Calendario 2026</h1>
+    
+    <div class="legend">
+        <div class="tag"><span class="dot" style="background:var(--c-libre)"></span> Libre</div>
+        <div class="tag"><span class="dot" style="background:var(--c-14-22)"></span> 14:00 - 22:00</div>
+        <div class="tag"><span class="dot" style="background:var(--c-12-22)"></span> 12:00 - 22:00</div>
+        <div class="tag"><span class="dot" style="background:var(--c-14-00)"></span> 14:00 - 00:00</div>
+        <div class="tag"><span class="dot" style="background:var(--c-vaca)"></span> Vacaciones</div>
+        <div class="tag"><span class="dot" style="background:var(--c-festivo)"></span> Festivo</div>
+    </div>
+
+    <div id="app" class="calendar-wrap"></div>
+
+    <div class="summary">
+        <div class="box b-12"><b>Días 12:00-22:00:</b> <span id="r-12">-</span></div>
+        <div class="box b-14"><b>Días 14:00-00:00:</b> <span id="r-14">-</span></div>
+    </div>
+
+    <div class="ctrl">
+        <button class="btn-pdf" onclick="doPDF()">PDF</button>
+        <button class="btn-del" onclick="doReset()">Borrar</button>
+    </div>
+
+    <p style="text-align:center; font-size:0.75rem; color:#777; margin-top:20px;">
+        Creado por Jordi Garcia Gomez
+    </p>
+
+    <script>
+        const D = document;
+        const Y = 2026;
+        const M_N = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+        const D_N = ["L","M","X","J","V","S","D"];
+
+        const S = [
+            {id:null,    l:""}, 
+            {id:'libre', l:"L"}, 
+            {id:'14-22', l:"14:00-22:00"},
+            {id:'12-22', l:"12:00-22:00"},
+            {id:'14-00', l:"14:00-00:00"},
+            {id:'vaca',  l:"VAC"},
+            {id:'festivo', l:"FES"}
+        ];
+        
+        let data = JSON.parse(localStorage.getItem('t2026_final_v2')) || {};
+
+        function init(){
+            const app = D.getElementById('app');
+            app.innerHTML = "";
+
+            for(let m=0; m<12; m++){
+                let div = D.createElement('div');
+                div.className='month';
+                div.innerHTML = `<div class="m-title">${M_N[m]}</div>`;
+                
+                let gr = D.createElement('div');
+                gr.className='grid';
+
+                D_N.forEach(d => {
+                    gr.innerHTML += `<div class="cell d-head">${d}</div>`;
+                });
+                
+                let fd = new Date(Y,m,1).getDay(); 
+                fd = fd===0 ? 7 : fd;
+                for(let i=1; i<fd; i++){
+                    gr.innerHTML += `<div class="cell"></div>`;
+                }
+                
+                let dim = new Date(Y,m+1,0).getDate();
+                for(let d=1; d<=dim; d++){
+                    let k = `${m}-${d}`;
+                    let st = data[k];
+                    let el = D.createElement('div');
+                    el.className = `cell day ${st ? 's-'+st : ''}`;
+                    let sObj = S.find(x=>x.id===st) || S[0];
+                    el.innerHTML = `<div class="num">${d}</div><div class="lbl">${sObj.l}</div>`;
+                    el.onclick = ()=>toggle(el,k,d);
+                    gr.appendChild(el);
+                }
+
+                div.appendChild(gr);
+                app.appendChild(div);
+            }
+            upd();
+        }
+
+        function toggle(el,k,d){
+            let cur = null; 
+            S.forEach(x=>{
+                if(x.id && el.classList.contains('s-'+x.id)) cur=x.id;
+            });
+            let idx = S.findIndex(x=>x.id===cur);
+            let nxt = S[(idx+1)%S.length];
+
+            S.forEach(x=>{
+                if(x.id) el.classList.remove('s-'+x.id);
+            });
+
+            if(nxt.id){
+                el.classList.add('s-'+nxt.id);
+                data[k]=nxt.id;
+            } else {
+                delete data[k];
+            }
+
+            el.querySelector('.lbl').innerText = nxt.l;
+            localStorage.setItem('t2026_final_v2', JSON.stringify(data));
+            upd();
+        }
+
+        function upd(){
+            let l1 = [], l2 = [];
+            Object.keys(data).sort((a,b)=>{
+                let [ma,da]=a.split('-').map(Number);
+                let [mb,db]=b.split('-').map(Number);
+                return ma-mb || da-db;
+            }).forEach(k=>{
+                let [m,d] = k.split('-').map(Number);
+                let txt = `${d} ${M_N[m]}`;
+                if(data[k]==='12-22') l1.push(txt);
+                if(data[k]==='14-00') l2.push(txt);
+            });
+
+            D.getElementById('r-12').innerText = l1.join(', ') || "-";
+            D.getElementById('r-14').innerText = l2.join(', ') || "-";
+        }
+
+        function doReset(){
+            if(confirm("¿Borrar todo?")){
+                localStorage.removeItem('t2026_final_v2');
+                data = {};
+                init();
+            }
+        }
+        
+        function doPDF(){
+            D.querySelector('.ctrl').style.display='none';
+            html2pdf().from(D.body).save('Calendario2026.pdf').then(()=>{
+                D.querySelector('.ctrl').style.display='flex';
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
